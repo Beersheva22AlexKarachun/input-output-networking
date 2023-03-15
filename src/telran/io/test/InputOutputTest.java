@@ -35,7 +35,7 @@ class InputOutputTest {
 	}
 
 	@Test
-	@Disabled
+//	@Disabled
 	void printDirectoryFileTest() throws IOException {
 		printDirectoryFile(FOLDER, MAX_LEVEL);
 	}
@@ -61,7 +61,7 @@ class InputOutputTest {
 	}
 
 	@Test
-	@Disabled
+//	@Disabled
 	void testFiles() {
 		Path path = Path.of(".");
 		System.out.println(path.toAbsolutePath().getNameCount());
