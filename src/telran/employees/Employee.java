@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Employee implements Serializable {
+public class Employee implements Serializable, Comparable<Employee> {
 
 	private static final long serialVersionUID = 1L;
 	long id;
@@ -53,8 +53,12 @@ public class Employee implements Serializable {
 		if (!(obj instanceof Employee))
 			return false;
 		Employee other = (Employee) obj;
-		return Objects.equals(birthDate, other.birthDate) && Objects.equals(department, other.department)
-				&& id == other.id && Objects.equals(name, other.name) && salary == other.salary;
+		return id == other.id;
+	}
+
+	@Override
+	public int compareTo(Employee o) {
+		return Long.compare(id, o.id);
 	}
 
 }
