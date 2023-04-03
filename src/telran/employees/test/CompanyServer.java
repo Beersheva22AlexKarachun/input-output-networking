@@ -7,7 +7,7 @@ import static telran.employees.test.CompanyTestConstants.*;
 public class CompanyServer {
 
 	public static void main(String[] args) throws Exception {
-		AbstractServer server = new TcpServer(new CompanyProtocol(), PORT);
+		AbstractServer server = new UdpServer(new CompanyProtocol(), PORT);
 		server.run();
 	}
 }

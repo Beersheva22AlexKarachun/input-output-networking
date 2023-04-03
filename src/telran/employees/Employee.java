@@ -61,4 +61,10 @@ public class Employee implements Serializable, Comparable<Employee> {
 		return Long.compare(id, o.id);
 	}
 
+	@Override
+	public String toString() {
+		return "Employee [id=" + id + ", name=" + name + ", birthDate=" + birthDate + ", department=" + department
+				+ ", salary=" + salary + "]";
+	}
+
 }

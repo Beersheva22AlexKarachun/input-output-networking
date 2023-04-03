@@ -59,7 +59,9 @@ public class CompanyImpl implements Company {
 
 	@Override
 	public List<Employee> getEmployeesBySalary(int salaryFrom, int salaryTo) {
-		return employeesSalary.subMap(salaryFrom, true, salaryTo, true).values().stream().flatMap(Set::stream).toList();
+		List<Employee> empls = employeesSalary.subMap(salaryFrom, true, salaryTo, true).values().stream()
+				.flatMap(Set::stream).toList();
+		return new ArrayList<>(empls != null ? empls : Collections.emptySet());
 	}
 
 	@Override

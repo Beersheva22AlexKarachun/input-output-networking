@@ -1,0 +1,4 @@
+hostname:
+port: 4000
+transport: udp
+departments: QA, Development, Management, Sales, HR
