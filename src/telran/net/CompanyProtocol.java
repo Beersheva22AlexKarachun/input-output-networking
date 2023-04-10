@@ -1,64 +1,72 @@
 package telran.net;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 import telran.employees.*;
 
 public class CompanyProtocol implements Protocol {
-	private final Company company = new CompanyImpl();
+
+	private final Company company;
+
+	public CompanyProtocol(Company company) {
+		this.company = company;
+	}
 
 	@Override
 	public Response getResponse(Request request) {
-		return switch (request.type) {
-		case "getEmployee" -> getEmployee(request.data);
-		case "addEmployee" -> addEmployee(request.data);
-		case "removeEmployee" -> removeEmployee(request.data);
-		case "getAllEmployees" -> getAllEmployees(request.data);
-		case "getEmployeesByMonthBirth" -> getEmployeesByMonthBirth(request.data);
-		case "getEmployeesBySalary" -> getEmployeesBySalary(request.data);
-		case "getEmployeesByDepartment" -> getEmployeesByDepartment(request.data);
-		case "save" -> save(request.data);
-		case "restore" -> restore(request.data);
-		default -> new Response(ResponseCode.WRONG_REQUEST, request.type + " wrong request");
-		};
+		Response response;
+		try {
+			Method method = CompanyProtocol.class.getDeclaredMethod(request.type, Serializable.class);
+			response = new Response(ResponseCode.OK, (Serializable) method.invoke(this, request.data));
+
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) {
+			response = new Response(ResponseCode.WRONG_REQUEST, "This type of request isn't supported: " + e);
+		} catch (IllegalArgumentException e) {
+			response = new Response(ResponseCode.WRONG_DATA, "Wrong data");
+		}
+
+		return response;
 	}
 
-	private Response restore(Serializable data) {
+	private String restore(Serializable data) {
 		company.restore(data.toString());
-		return new Response(ResponseCode.OK, "");
+		return "Company has been restored";
 	}
 
-	private Response save(Serializable data) {
+	private String save(Serializable data) {
 		company.save(data.toString());
-		return new Response(ResponseCode.OK, "");
+		return "Company has been saved";
 	}
 
-	private Response getEmployeesByDepartment(Serializable data) {
-		return new Response(ResponseCode.OK, (Serializable) company.getEmployeesByDepartment(data.toString()));
+	private List<Employee> getEmployeesByDepartment(Serializable data) {
+		return company.getEmployeesByDepartment(data.toString());
 	}
 
-	private Response getEmployeesBySalary(Serializable data) {
+	private List<Employee> getEmployeesBySalary(Serializable data) {
 		int[] salaries = (int[]) data;
-		return new Response(ResponseCode.OK, (Serializable) company.getEmployeesBySalary(salaries[0], salaries[1]));
+		return company.getEmployeesBySalary(salaries[0], salaries[1]);
 	}
 
-	private Response getEmployeesByMonthBirth(Serializable data) {
-		return new Response(ResponseCode.OK, (Serializable) company.getEmployeesByMonthBirth((int) data));
+	private List<Employee> getEmployeesByMonthBirth(Serializable data) {
+		return company.getEmployeesByMonthBirth((int) data);
 	}
 
-	private Response getAllEmployees(Serializable data) {
-		return new Response(ResponseCode.OK, (Serializable) company.getAllEmployees());
+	private List<Employee> getAllEmployees(Serializable data) {
+		return company.getAllEmployees();
 	}
 
-	private Response removeEmployee(Serializable data) {
-		return new Response(ResponseCode.OK, company.removeEmployee((long) data));
+	private Employee removeEmployee(Serializable data) {
+		return company.removeEmployee((long) data);
 	}
 
-	private Response addEmployee(Serializable data) {
-		return new Response(ResponseCode.OK, company.addEmployee((Employee) data));
+	private boolean addEmployee(Serializable data) {
+		return company.addEmployee((Employee) data);
 	}
 
-	private Response getEmployee(Serializable data) {
-		return new Response(ResponseCode.OK, company.getEmployee((long) data));
+	private Employee getEmployee(Serializable data) {
+		return company.getEmployee((long) data);
 	}
 }
